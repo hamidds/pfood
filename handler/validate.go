@@ -13,6 +13,16 @@ import (
 func CustomerValidate(customer *model.Customer) error {
 	validate, trans := SetUpValidator()
 	filedErrors := validate.Struct(customer)
+	return getError(filedErrors, trans)
+}
+
+func FoodValidate(food *model.Food) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(food)
+	return getError(filedErrors, trans)
+}
+
+func getError(filedErrors error, trans ut.Translator) error {
 	if filedErrors != nil {
 		var message string
 		for _, e := range filedErrors.(validator.ValidationErrors) {
@@ -23,6 +33,8 @@ func CustomerValidate(customer *model.Customer) error {
 	}
 	return nil
 }
+
+
 
 func SetUpValidator() (*validator.Validate, ut.Translator) {
 	validate := validator.New()

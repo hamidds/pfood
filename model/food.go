@@ -12,7 +12,26 @@ type Food struct {
 	Restaurant *Restaurant        `json:"restaurant"   bson:"restaurant"    validate:"isdefault"`
 }
 
+func NewFood() *Food {
+	var food Food
+	food.ID = primitive.NewObjectID()
+	food.Name = ""
+	food.Price = 0.0
+	food.Available = true
+	food.Comments = []*Comment{}
+	food.Rating = 1
+	food.Restaurant = &Restaurant{}
+	return &food
+}
 
+func (food *Food) SetFields(f *Food) {
+	food.Name = f.Name
+	food.Price = f.Price
+	food.Available = f.Available
+	food.Comments = f.Comments
+	food.Rating = f.Rating
+	food.Restaurant = f.Restaurant
+}
 
 func (food *Food) AddComment(comment *Comment) {
 	// Update Food Rating

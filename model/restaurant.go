@@ -22,3 +22,25 @@ func (restaurant *Restaurant) AddFood(food *Food) {
 	restaurant.Foods = append(restaurant.Foods, food)
 	// Update DB ?
 }
+
+func (restaurant *Restaurant) RemoveFood(food *Food) {
+	var newFoods []*Food
+	for _, f := range restaurant.Foods {
+		if f.Name != food.Name {
+			newFoods = append(newFoods, f)
+		}
+	}
+	restaurant.Foods = newFoods
+}
+
+func (restaurant *Restaurant) ReplaceFood(food *Food) {
+	var newFoods []*Food
+	for _, f := range restaurant.Foods {
+		if f.Name != food.Name {
+			newFoods = append(newFoods, f)
+		} else {
+			newFoods = append(newFoods, food)
+		}
+	}
+	restaurant.Foods = newFoods
+}

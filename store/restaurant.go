@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"errors"
 	"github.com/hamidds/pfood/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -54,6 +55,15 @@ func (rs *RestaurantStore) GetByName(name string) (*model.Restaurant, error) {
 	return &restaurant, err
 }
 
+func (rs *RestaurantStore) GetFoodByNameFromRestaurant(restaurant *model.Restaurant, name string) (*model.Food, error) {
+	for _, food := range restaurant.Foods {
+		if food.Name == name {
+			return food, nil
+		}
+	}
+	return &model.Food{}, errors.New("coin doesn't exist")
+}
+
 func (rs *RestaurantStore) GetRestaurantsListByName(name string) (*[]model.Food, error) {
 	var foods []model.Food
 	query := bson.M{"name": name}
@@ -80,17 +90,4 @@ func (rs *RestaurantStore) GetRestaurantsListByDistrict(district int) (*[]model.
 	return &foods, err
 }
 
-func (rs *RestaurantStore) RemoveFood(restaurant *model.Restaurant, food *model.Food) error {
-	var newFoods []*model.Food
-	for _, f := range restaurant.Foods {
-		if f.Name != food.Name {
-			newFoods = append(newFoods, f)
-		}
-	}
-	_, err := rs.db.UpdateOne(context.TODO(), bson.M{"name": restaurant.Name}, bson.M{"$set": bson.M{"foods": newFoods}})
-	if err != nil {
-		return err
-	}
-	restaurant.Foods = newFoods
-	return nil
-}
+

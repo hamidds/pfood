@@ -29,34 +29,25 @@ func main() {
 	// Customer Handlers
 	r.HandleFunc("/signup", handler.CustomerSignUp).Methods("POST")
 	r.HandleFunc("/login", handler.AuthMiddleware(handler.CustomerLogin)).Methods("POST")
-	//r.HandleFunc("/customers/{phone}", handler.UpdateCustomer).Methods("PUT")
+	//r.HandleFunc("/customers/{phone_number}", handler.UpdateCustomer).Methods("PUT")
 	r.HandleFunc("/signup", handler.GetCustomers).Methods("GET")
-	//r.HandleFunc("/{rname}/{fname}", handler.DeleteCoin).Methods("DELETE")
 
-	// Coin Handlers
-	//r.HandleFunc("/{wname}/coins", handler.CreateCoin).Methods("POST")
-	//r.HandleFunc("/{wname}", handler.GetCoins).Methods("GET")
-	//r.HandleFunc("/{wname}/{symbol}", handler.UpdateCoin).Methods("PUT")
-	//r.HandleFunc("/{wname}/{symbol}", handler.DeleteCoin).Methods("DELETE")
+	// Food Handlers => By Manager
+	r.HandleFunc("/{rname}/foods", handler.AddFood).Methods("POST")
+	r.HandleFunc("/{rname}/{fname}", handler.DeleteFood).Methods("DELETE")
+	r.HandleFunc("/{rname}/{fname}/{available}", handler.UpdateFood).Methods("PUT")
+
+	// Food Filters => By Customer
+	r.HandleFunc("/foods", handler.GetFoods).Methods("GET")
+	r.HandleFunc("/foods/{fname}", handler.GetFoodsByName).Methods("GET")
+	//r.HandleFunc("/foods/{rname}", handler.GetFoodsByRestaurant).Methods("GET")
+	//r.HandleFunc("/foods/{district}", handler.GetFoodsByDistrict).Methods("GET")
+	// r.HandleFunc("/foods/{rname}/{fname}", handler.GetFoodsByRestaurantAndName).Methods("GET")
+	// r.HandleFunc("/foods/{fname}/{district}", handler.GetFoodsByNameAndDistrict).Methods("GET")
+
+	// Favorite Foods
+	// r.HandleFunc("/foods/favorites", handler.GetFavoriteFoods).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
-	//var customer model.Customer
-	//customer.Name = "hamid"
-	//var restaurant model.Restaurant
-	//restaurant.Name = "Shabdiz"
-	//var food model.Food
-	//food.Name = "Burger"
-	//food.Restaurant = &restaurant
-	//var comment model.Comment
-	//comment.Text = "Before"
-	//comment.Food = &food
-	//comment.Rating = 5
-	//customer.AddComment(&comment)
-	//fmt.Println(customer.Comments[0].Text)
-	//comment.Text = "After"
-	//fmt.Println(customer.Comments[0].Text)
-	//fmt.Println(customer.Favorites)
-	//fmt.Println(customer.GetOrderRates())
-	//food.Name = "burger after"
 
 }

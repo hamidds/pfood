@@ -62,6 +62,7 @@ var CustomerStore *store.CustomerStore
 var CustomerLogin = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
+
 	reqBody, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)

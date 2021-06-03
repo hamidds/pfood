@@ -1,5 +1,9 @@
 package model
 
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
 type Customer struct {
 	PhoneNumber  string     `json:"phone_number"   bson:"phone_number"       validate:"required"`
 	Password     string     `json:"password"       bson:"password"           validate:"required"`
@@ -15,45 +19,54 @@ type Customer struct {
 func (customer *Customer) AddComment(comment *Comment) {
 	customer.Comments = append(customer.Comments, comment)
 	// Update Favorites
-	customer.UpdateFavorites()
+	//customer.UpdateFavorites()
 }
 
 func (customer *Customer) AddOrder(order *Order) {
 	customer.OrderHistory = append(customer.OrderHistory, order)
 	// Update Favorites
-	customer.UpdateFavorites()
+	//customer.UpdateFavorites()
 }
 
-func (customer *Customer) UpdateFavorites() {
+//func (customer *Customer) UpdateFavorites() {
+//	var newFavorites []*Food
+//
+//	OrderCounts := customer.GetOrderCounts()
+//	for foodID, foodCount := range OrderCounts {
+//		if foodCount > 5 {
+//			// Get food from database
+//			//food, err := handler.FoodStore.GetByID(foodID)
+//			if err != nil {
+//				fmt.Println(err)
+//				continue
+//			}
+//			// Add food to newFavorite
+//			newFavorites = append(newFavorites, food)
+//		}
+//	}
+//
+//	OrderRates := customer.GetOrderRates()
+//	for foodID, foodRate := range OrderRates {
+//		if foodRate > 3 {
+//			// Get food from database
+//			//food, err := handler.FoodStore.GetByID(foodID)
+//			if err != nil {
+//				fmt.Println(err)
+//				continue
+//			}
+//			// Add food to newFavorite
+//			newFavorites = append(newFavorites, food)
+//		}
+//	}
+//
+//	customer.Favorites = newFavorites
+//}
 
-	//var newFavorite []Food
-	//
-	//OrderCounts := customer.GetOrderCounts()
-	//for foodName, foodCount := range OrderCounts {
-	//	restaurant = strings.Split(foodName, "+")[0]
-	//	food = strings.Split(foodName, "+")[1]
-	//	if foodCount > 5 {
-	//		// Get food from database
-	//		// Add it to newFavorite
-	//	}
-	//}
-	//
-	//OrderRates := customer.GetOrderRates()
-	//for foodName, foodRate := range OrderRates {
-	//	restaurant = strings.Split(foodName, "+")[0]
-	//	food = strings.Split(foodName, "+")[1]
-	//	if foodRate > 3 {
-	//		// Get food from database
-	//		// Add it to newFavorite
-	//	}
-	//}
-}
-
-func (customer *Customer) GetOrderRates() map[string]float64 {
-	orderRates := make(map[string]float64)
-	commentCounts := make(map[string]int)
+func (customer *Customer) GetOrderRates() map[primitive.ObjectID]float64 {
+	orderRates := make(map[primitive.ObjectID]float64)
+	commentCounts := make(map[primitive.ObjectID]int)
 	for _, comment := range customer.Comments {
-		key := comment.Food.Name + "+" + comment.Food.Restaurant.Name
+		key := comment.Food.ID
 		if count, ok := commentCounts[key]; ok {
 			newRate := float64(orderRates[key]*float64(count)+float64(comment.Rating)) / float64(count+1)
 			orderRates[key] = newRate
@@ -66,11 +79,11 @@ func (customer *Customer) GetOrderRates() map[string]float64 {
 	return orderRates
 }
 
-func (customer *Customer) GetOrderCounts() map[string]int {
-	orderCounts := make(map[string]int)
+func (customer *Customer) GetOrderCounts() map[primitive.ObjectID]int {
+	orderCounts := make(map[primitive.ObjectID]int)
 	for _, order := range customer.OrderHistory {
 		for _, item := range order.Items {
-			key := item.Food.Name + "+" + item.Food.Restaurant.Name
+			key := item.Food.ID
 			if oldCount, ok := orderCounts[key]; ok {
 				orderCounts[key] = oldCount + item.Count
 			} else {

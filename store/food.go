@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/hamidds/pfood/model"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,6 +29,12 @@ func (fs *FoodStore) Remove(field, value string) error {
 func (fs *FoodStore) GetByName(name string) (*model.Food, error) {
 	var food model.Food
 	err := fs.db.FindOne(context.TODO(), bson.M{"name": name}).Decode(&food)
+	return &food, err
+}
+
+func (fs *FoodStore) GetByID(id primitive.ObjectID) (*model.Food, error) {
+	var food model.Food
+	err := fs.db.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&food)
 	return &food, err
 }
 
@@ -72,11 +79,12 @@ func (fs *FoodStore) UpdateFood(food *model.Food) error {
 	return err
 }
 
-func (fs *FoodStore) AddComment(food *model.Food, comment *model.Comment) error {
-	food.AddComment(comment)
-	_, err := fs.db.UpdateOne(context.TODO(), bson.M{"_id": food.ID}, bson.M{"$set": bson.M{"comments": food.Comments}})
-	if err != nil {
-		return err
-	}
-	return nil
-}
+//
+//func (fs *FoodStore) AddComment(food *model.Food, comment *model.Comment) error {
+//	food.AddComment(comment)
+//	_, err := fs.db.UpdateOne(context.TODO(), bson.M{"_id": food.ID}, bson.M{"$set": bson.M{"comments": food.Comments}})
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
