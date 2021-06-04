@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
+)
 
 type Item struct {
 	Food  *Food `json:"food"        bson:"food"`
@@ -15,17 +18,45 @@ const Delivered = "Delivered!"
 type Order struct {
 	//Foods      Food   `json:"foods"       bson:"foods"`
 	//Foods      map[string]int `json:"foods"       bson:"foods"`
-	Items               []*Item       `json:"items"                 bson:"items"`
-	TotalPrice          float64       `json:"total_price"           bson:"total_price"`
-	Available           bool          `json:"available"             bson:"available"`
-	Customer            *Customer     `json:"customer"              bson:"customer" `
-	State               string        `json:"state"                 bson:"state"`
-	PreparationDuration time.Duration `json:"preparation_duration"  bson:"preparation_duration"`
-	DeliveryDuration    time.Duration `json:"delivery_duration"     bson:"delivery_duration"`
-	ConfirmTime         time.Time     `json:"confirm_time"          bson:"confirm_time"`
+	ID                  primitive.ObjectID `json:"_id" bson:"_id"`
+	Items               []*Item            `json:"items"                 bson:"items"`
+	TotalPrice          float64            `json:"total_price"           bson:"total_price"`
+	Customer            *Customer          `json:"customer"              bson:"customer" `
+	State               string             `json:"state"                 bson:"state"`
+	PreparationDuration time.Duration      `json:"preparation_duration"  bson:"preparation_duration"`
+	DeliveryDuration    time.Duration      `json:"delivery_duration"     bson:"delivery_duration"`
+	ConfirmTime         time.Time          `json:"confirm_time"          bson:"confirm_time"`
+}
+
+func NewOrder() *Order {
+	var order Order
+	order.ID = primitive.NewObjectID()
+	order.Items = []*Item{}
+	order.TotalPrice = 0.0
+	order.Customer = &Customer{}
+	order.State = Pending
+	order.PreparationDuration = 1 * time.Hour
+	order.DeliveryDuration = 30 * time.Minute
+	order.ConfirmTime = time.Now()
+	return &order
+}
+
+func (order *Order) SetFields(o *Order) {
+	order.Items = o.Items
+	order.TotalPrice = o.TotalPrice
+	order.Customer = o.Customer
+	order.State = o.State
+	order.PreparationDuration = o.PreparationDuration
+	order.DeliveryDuration = o.DeliveryDuration
+	order.ConfirmTime = o.ConfirmTime
+
 }
 
 func (order *Order) GetState() string {
+	if order.State == Pending {
+		return Pending
+	}
+
 	t := order.ConfirmTime.Add(order.PreparationDuration)
 	if time.Now().Before(t) {
 		order.SetState(Preparing)

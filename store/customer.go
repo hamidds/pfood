@@ -52,7 +52,7 @@ func (cs *CustomerStore) UpdateProfile(customer *model.Customer, phone string) e
 	_, err = cs.db.UpdateOne(context.TODO(),
 		bson.M{"phone_number": old.PhoneNumber},
 		bson.M{"$set": bson.M{
-			"phone_number":  customer.PhoneNumber,
+			"phone_number":  old.PhoneNumber,
 			"password":      customer.Password,
 			"name":          customer.Name,
 			"credit":        customer.Credit,

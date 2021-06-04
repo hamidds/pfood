@@ -22,6 +22,38 @@ func FoodValidate(food *model.Food) error {
 	return getError(filedErrors, trans)
 }
 
+func ManagerValidate(manager *model.Manager) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(manager)
+	return getError(filedErrors, trans)
+}
+
+func RestaurantValidate(restaurant *model.Restaurant) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(restaurant)
+	return getError(filedErrors, trans)
+}
+
+func CommentValidate(comment *model.Comment) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(comment)
+	return getError(filedErrors, trans)
+}
+
+func ReplyValidate(reply *model.CommentReply) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(reply)
+	return getError(filedErrors, trans)
+}
+
+
+func OrderValidate(order *model.Order) error {
+	validate, trans := SetUpValidator()
+	filedErrors := validate.Struct(order)
+	return getError(filedErrors, trans)
+}
+
+
 func getError(filedErrors error, trans ut.Translator) error {
 	if filedErrors != nil {
 		var message string

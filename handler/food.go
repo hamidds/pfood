@@ -201,4 +201,8 @@ func UpdateFood(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	writer.WriteHeader(http.StatusOK)
+	response := model.NewFoodResponse(food)
+	json.NewEncoder(writer).Encode(response)
+
 }

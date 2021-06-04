@@ -49,3 +49,28 @@ func (food *Food) UpdateRating(comment *Comment) {
 func (food *Food) SetAvailable(status bool) {
 	food.Available = status
 }
+
+func (food *Food) GetComment(id primitive.ObjectID) *Comment {
+	for _, c := range food.Comments {
+		if c.ID == id {
+			return c
+		}
+	}
+	return nil
+}
+
+func (food *Food) ReplaceComment(comment *Comment)  {
+	var newComments []*Comment
+	for _, c := range food.Comments {
+		if c.ID != comment.ID {
+			newComments = append(newComments, c)
+		} else {
+			newComments = append(newComments, comment)
+		}
+	}
+	food.Comments = newComments
+}
+
+func (food *Food) GetComments() []*Comment  {
+	return food.Comments
+}

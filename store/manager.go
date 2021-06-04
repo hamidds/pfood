@@ -25,7 +25,7 @@ func (ms *ManagerStore) Remove(field, value string) error {
 	return err
 }
 
-func (ms *ManagerStore) UpdateName(manager *model.Manager, email string) error {
+func (ms *ManagerStore) Update(manager *model.Manager, email string) error {
 	old, err := ms.GetByEmail(email)
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func (ms *ManagerStore) UpdateName(manager *model.Manager, email string) error {
 	_, err = ms.db.UpdateOne(context.TODO(),
 		bson.M{"email": old.Email},
 		bson.M{"$set": bson.M{
-			"email":      manager.Email,
+			"email":      old.Email,
 			"name":       manager.Name,
 			"password":   manager.Password,
 			"restaurant": manager.Restaurant,

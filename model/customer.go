@@ -97,3 +97,40 @@ func (customer *Customer) GetOrderCounts() map[primitive.ObjectID]int {
 func (customer *Customer) CheckPassword(password string) bool {
 	return customer.Password == password
 }
+
+func (customer *Customer) ReplaceComment(comment *Comment) {
+	var newComments []*Comment
+	for _, c := range customer.Comments {
+		if c.ID != comment.ID {
+			newComments = append(newComments, c)
+		} else {
+			newComments = append(newComments, comment)
+		}
+	}
+	customer.Comments = newComments
+}
+
+func (customer *Customer) GetOrder(id primitive.ObjectID) *Order {
+	for _, o := range customer.OrderHistory {
+		if o.ID == id {
+			return o
+		}
+	}
+	return nil
+}
+
+func (customer *Customer) GetOrdersHistory() []*Order {
+	return customer.OrderHistory
+}
+
+func (customer *Customer) ReplaceOrder(order *Order) {
+	var newPendingOrders []*Order
+	for _, o := range customer.OrderHistory {
+		if o.ID != order.ID {
+			newPendingOrders = append(newPendingOrders, o)
+		} else {
+			newPendingOrders = append(newPendingOrders, order)
+		}
+	}
+	customer.OrderHistory = newPendingOrders
+}

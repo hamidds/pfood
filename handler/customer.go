@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"github.com/gorilla/mux"
 	"github.com/hamidds/pfood/model"
 	"github.com/hamidds/pfood/store"
 	"io/ioutil"
@@ -62,7 +63,6 @@ var CustomerStore *store.CustomerStore
 var CustomerLogin = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
-
 	reqBody, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
@@ -112,7 +112,6 @@ var CustomerLogin = http.HandlerFunc(func(writer http.ResponseWriter, request *h
 	json.NewEncoder(writer).Encode(response)
 })
 
-
 func GetCustomers(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	var customers *[]model.Customer
@@ -127,9 +126,6 @@ func GetCustomers(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(customers)
 }
-
-
-
 
 func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -162,7 +158,7 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	// Username already exists!
 	if _, err := CustomerStore.GetByPhone(customer.PhoneNumber); err == nil {
 		writer.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(writer).Encode(model.NewError(errors.New("username already exists")))
+		json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber already exists")))
 		return
 	}
 
@@ -179,4 +175,45 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(response)
 }
 
+func UpdateCustomer(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
 
+	reqBody, err := ioutil.ReadAll(request.Body)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(err))
+		return
+	}
+
+	var customer model.Customer
+	err = json.Unmarshal(reqBody, &customer)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(err))
+		return
+	}
+
+	currentCustomer, err := CustomerStore.GetByPhone(params["phone_number"])
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(errors.New("customer doesn't exist")))
+		return
+	}
+
+	//if _, err := CustomerStore.GetByPhone(customer.PhoneNumber); err == nil && params["phone_number"] != customer.PhoneNumber {
+	//	writer.WriteHeader(http.StatusInternalServerError)
+	//	json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber is already taken")))
+	//	return
+	//}
+
+	err = CustomerStore.UpdateProfile(currentCustomer, params["phone_number"])
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(model.NewError(err))
+		return
+	}
+
+	writer.WriteHeader(http.StatusOK)
+	//json.NewEncoder(writer).Encode(response)
+}
