@@ -1,10 +1,12 @@
 import React from 'react'
-import useForm from './useForm'
-import validate from './validateRegistrationInfo'
+import useFormCustomerRegister from './useFormCustomerRegister'
+import validate from './validateCustomerRegistrationInfo'
+import {Link} from "react-router-dom";
+import {BrowserRouter as Router} from "react-router-dom";
 
-const FormSignup = ({ submitForm }) => {
+const FormSignupCustomer = ({ submitForm }) => {
     const {handleChange, values, handleSubmit, errors} 
-    = useForm(
+    = useFormCustomerRegister(
         submitForm,
         validate
         ); 
@@ -54,11 +56,13 @@ const FormSignup = ({ submitForm }) => {
             Already have an account? <a href="#">Login</a>
             </span>
             <span className="form-input-manager-register">
-            Register as a company owner <a href="#">Here</a>
+                <Router>
+                    Register as a company owner? Sign up <Link to={"/FormManagerRegister"} exact>here</Link>
+                </Router>
             </span>
         </form>
     </div>
     )
 }
 
-export default FormSignup
+export default FormSignupCustomer

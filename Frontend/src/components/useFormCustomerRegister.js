@@ -1,6 +1,6 @@
 import {useState , useEffect} from 'react'
 
-const useForm = (callback, validate) => {
+const useFormCustomerRegister = (callback, validate) => {
     const [values, setValues] = useState({
         phone_number : '',
         password : ''
@@ -44,4 +44,4 @@ const useForm = (callback, validate) => {
     return {handleChange, values, handleSubmit, errors}
 };
 
-export default useForm;
+export default useFormCustomerRegister;
