@@ -30,8 +30,8 @@
 }
 
 .form-img {
-    width: 80%;
-    height: 80%;
+    width: 60%;
+    height: 60%;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -151,5 +151,19 @@
 .form-input-login a {
     text-decoration: none;
     color: #ff8c42;
+    font-weight: 600;
+}
+
+.form-input-manager-register {
+    font-size: 0.8rem;
+    margin-top: 10px;
+    color: #fff;
+    width: 80%;
+    text-align: center;
+}
+
+.form-input-manager-register a {
+    text-decoration: none;
+    color: #f9c784;
     font-weight: 600;
 }

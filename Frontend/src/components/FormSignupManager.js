@@ -1,10 +1,10 @@
 import React from 'react'
-import useForm from './useForm'
-import validate from './validateRegistrationInfo'
+import useFormCustomerRegister from './useFormCustomerRegister'
+import validate from './validateCustomerRegistrationInfo'
 
 const FormSignupManager = ({ submitForm }) => {
     const {handleChange, values, handleSubmit, errors}
-        = useForm(
+        = useFormCustomerRegister(
         submitForm,
         validate
     );
@@ -15,7 +15,7 @@ const FormSignupManager = ({ submitForm }) => {
             <form className="form" onSubmit={handleSubmit} noValidate>
                 <h1>Register Page </h1>
                 <div className="form-inputs">
-                    <label htmlFor="phone_number" className="form-label">
+                    <label htmlFor="email" className="form-label">
                         Phone number:
                     </label>
                     <input
@@ -23,14 +23,14 @@ const FormSignupManager = ({ submitForm }) => {
                         type="email"
                         name="email"
                         className="form-input"
-                        placeholder="username@domain.com"
+                        placeholder="Enter your email address"
                         value={values.email}
                         onChange={handleChange}
                     />
                     {errors.email && <p>{errors.email}</p>}
                 </div>
                 <div className="form-inputs">
-                    <label htmlFor="email" className="form-label">
+                    <label htmlFor="password" className="form-label">
                         Password:
                     </label>
                     <input
@@ -49,9 +49,6 @@ const FormSignupManager = ({ submitForm }) => {
                 </button>
                 <span className="form-input-login">
             Already have an account? <a href="#">Login</a>
-            </span>
-                <span className="form-input-manager-register">
-            Register as a company owner <a href="#">Here</a>
             </span>
             </form>
         </div>
