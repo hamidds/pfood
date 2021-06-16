@@ -7,10 +7,7 @@ type Error struct {
 func NewError(err error) Error {
 	e := Error{}
 	e.Errors = make(map[string]interface{})
-	switch v := err.(type) {
-	default:
-		e.Errors["body"] = v.Error()
-	}
+	e.Errors["body"] = err.Error()
 	return e
 }
 

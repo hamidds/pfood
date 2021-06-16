@@ -39,6 +39,7 @@ func main() {
 
 	// Customer Handlers
 	r.HandleFunc("/signup/user", handler.CustomerSignUp).Methods("POST")
+	r.HandleFunc("/signup/check/{number}", handler.CustomerPhoneCheck).Methods("GET")
 	r.HandleFunc("/login/user", handler.AuthMiddleware(handler.CustomerLogin)).Methods("POST")
 	r.HandleFunc("/customers", handler.UpdateCustomer).Methods("PUT") // jwt
 	r.HandleFunc("/signup", handler.GetCustomers).Methods("GET")

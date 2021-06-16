@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
 import FormSignupCustomer from './FormSignupCustomer';
 import './Form.css';
+import {Redirect} from "react-router-dom";
 
 const FormCustomerRegister = () => {
-    const [isSubmited, setIsSubmitted] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
 
     function submitForm() {
         setIsSubmitted(true);
@@ -15,9 +17,8 @@ const FormCustomerRegister = () => {
             <div className='form-content-left'>
                 <img className='form-img' src='img/img-customer.svg' alt='customer'/>
             </div>
-            {!isSubmited ? (<FormSignupCustomer submitForm={submitForm} />) : console.log("submitted") }
+            {!isSubmitted ? (<FormSignupCustomer submitForm={submitForm} />) : <Redirect to="/main"/> }
         </div>
-
         </>
     )
 }

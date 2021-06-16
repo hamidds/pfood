@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/hamidds/pfood/model"
 	"github.com/hamidds/pfood/store"
@@ -127,7 +128,24 @@ func GetCustomers(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(customers)
 }
 
+func CustomerPhoneCheck(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	fmt.Println(params["number"])
+	_, err := CustomerStore.GetByPhone(params["number"])
+	if err != nil {
+		writer.WriteHeader(http.StatusOK)
+		return
+	} else{
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber already exist")))
+		return
+	}
+
+}
+
 func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println("Customer sign up")
 	writer.Header().Set("Content-Type", "application/json")
 
 	reqBody, err := ioutil.ReadAll(request.Body)
@@ -138,7 +156,6 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	var customer *model.Customer
-
 	// Errors which are related to Json encoding
 	err = json.Unmarshal(reqBody, &customer)
 	if err != nil {
@@ -146,6 +163,8 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(writer).Encode(model.NewError(err))
 		return
 	}
+	fmt.Println( "customer phone number: " + customer.PhoneNumber)
+	fmt.Println( "customer Password: " + customer.Password)
 
 	// Errors which are related to customer fields
 	err = CustomerValidate(customer)
@@ -154,13 +173,16 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(writer).Encode(model.NewError(err))
 		return
 	}
+	fmt.Println("Customer Fields Validated")
 
 	// Username already exists!
 	if _, err := CustomerStore.GetByPhone(customer.PhoneNumber); err == nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber already exists")))
+		fmt.Println("phonenumber already exists")
 		return
 	}
+	fmt.Println("Username Checked")
 
 	//newCustomer := model.(wallet.Name, 0.0, []model.Coin{}, time.Now())
 	err = CustomerStore.Create(customer)
@@ -173,6 +195,7 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(http.StatusOK)
 	response := model.NewUserResponse(customer)
 	json.NewEncoder(writer).Encode(response)
+	fmt.Println("Response Sent")
 }
 
 func UpdateCustomer(writer http.ResponseWriter, request *http.Request) {
