@@ -55,12 +55,12 @@ func (cs *CustomerStore) UpdateProfile(customer *model.Customer, phone string) e
 			"phone_number":  old.PhoneNumber,
 			"password":      customer.Password,
 			"name":          customer.Name,
-			"credit":        customer.Credit,
+			"credit":        old.Credit,
 			"district":      customer.District,
 			"address":       customer.Address,
-			"order_history": customer.OrderHistory,
-			"favorites":     customer.Favorites,
-			"comments":      customer.Comments,
+			"order_history": old.OrderHistory,
+			"favorites":     old.Favorites,
+			"comments":      old.Comments,
 		},
 		})
 	return err

@@ -61,7 +61,7 @@ var CustomerStore *store.CustomerStore
 //	json.NewEncoder(writer).Encode(response)
 //})
 
-var CustomerLogin = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+func CustomerLogin(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	reqBody, err := ioutil.ReadAll(request.Body)
@@ -111,7 +111,7 @@ var CustomerLogin = http.HandlerFunc(func(writer http.ResponseWriter, request *h
 	writer.WriteHeader(http.StatusOK)
 	response := model.NewUserResponse(customer)
 	json.NewEncoder(writer).Encode(response)
-})
+}
 
 func GetCustomers(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
@@ -128,6 +128,24 @@ func GetCustomers(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(customers)
 }
 
+var GetCustomer = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	//params := mux.Vars(request)
+	phoneNumber := request.Header.Get("phone_number")
+	customer, err := CustomerStore.GetByPhone(phoneNumber)
+	fmt.Println("At GetCustomer: ")
+	fmt.Println(phoneNumber)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(err))
+		return
+	}
+
+	writer.WriteHeader(http.StatusOK)
+	response := model.NewUserResponse(customer)
+	json.NewEncoder(writer).Encode(response)
+})
+
 func CustomerPhoneCheck(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(request)
@@ -136,9 +154,9 @@ func CustomerPhoneCheck(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		writer.WriteHeader(http.StatusOK)
 		return
-	} else{
+	} else {
 		writer.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber already exist")))
+		json.NewEncoder(writer).Encode(model.NewError(errors.New("phonenumber already exists")))
 		return
 	}
 
@@ -163,8 +181,8 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(writer).Encode(model.NewError(err))
 		return
 	}
-	fmt.Println( "customer phone number: " + customer.PhoneNumber)
-	fmt.Println( "customer Password: " + customer.Password)
+	fmt.Println("customer phone number: " + customer.PhoneNumber)
+	fmt.Println("customer Password: " + customer.Password)
 
 	// Errors which are related to customer fields
 	err = CustomerValidate(customer)
@@ -198,31 +216,29 @@ func CustomerSignUp(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("Response Sent")
 }
 
-func UpdateCustomer(writer http.ResponseWriter, request *http.Request) {
+var UpdateCustomer = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(request)
-
 	reqBody, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(writer).Encode(model.NewError(err))
 		return
 	}
-
-	var customer model.Customer
+	var customer *model.Customer
 	err = json.Unmarshal(reqBody, &customer)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(writer).Encode(model.NewError(err))
 		return
 	}
+	phoneNumber := request.Header.Get("phone_number")
 
-	currentCustomer, err := CustomerStore.GetByPhone(params["phone_number"])
-	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(writer).Encode(model.NewError(errors.New("customer doesn't exist")))
-		return
-	}
+	//_, err = CustomerStore.GetByPhone(params["phone_number"])
+	//if err != nil {
+	//	writer.WriteHeader(http.StatusInternalServerError)
+	//	json.NewEncoder(writer).Encode(model.NewError(errors.New("customer doesn't exist")))
+	//	return
+	//}
 
 	//if _, err := CustomerStore.GetByPhone(customer.PhoneNumber); err == nil && params["phone_number"] != customer.PhoneNumber {
 	//	writer.WriteHeader(http.StatusInternalServerError)
@@ -230,13 +246,14 @@ func UpdateCustomer(writer http.ResponseWriter, request *http.Request) {
 	//	return
 	//}
 
-	err = CustomerStore.UpdateProfile(currentCustomer, params["phone_number"])
+	err = CustomerStore.UpdateProfile(customer, phoneNumber)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(writer).Encode(model.NewError(err))
+		fmt.Println("Here at 253")
 		return
 	}
 
 	writer.WriteHeader(http.StatusOK)
 	//json.NewEncoder(writer).Encode(response)
-}
+})

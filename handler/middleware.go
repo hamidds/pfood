@@ -35,6 +35,6 @@ func AuthMiddleware(next http.Handler) http.HandlerFunc {
 		fmt.Println(phoneNumber)
 		request.Header.Set("phone_number", phoneNumber)
 		next.ServeHTTP(writer, request)
-
+		fmt.Println("End Of middleware")
 	}
 }

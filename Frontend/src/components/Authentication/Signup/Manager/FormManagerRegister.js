@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import FormSignupManager from './FormSignupManager';
-import './Form.css';
+import '../../RegisterForm.css';
 
 const FormManagerRegister = () => {
     const [isSubmited, setIsSubmitted] = useState(false);

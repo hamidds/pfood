@@ -3,6 +3,8 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/hamidds/pfood/model"
 	"github.com/hamidds/pfood/store"
 	"io/ioutil"
@@ -59,8 +61,7 @@ func ManagerSignUp(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(response)
 }
 
-
-func ManagerLogin(writer http.ResponseWriter, request *http.Request){
+func ManagerLogin(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 
 	reqBody, err := ioutil.ReadAll(request.Body)
@@ -110,4 +111,20 @@ func ManagerLogin(writer http.ResponseWriter, request *http.Request){
 	writer.WriteHeader(http.StatusOK)
 	response := model.NewManagerResponse(manager)
 	json.NewEncoder(writer).Encode(response)
+}
+
+func ManagerEmailCheck(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(request)
+	fmt.Println(params["email"])
+
+	if _, err := ManagerStore.GetByEmail(params["email"]); err != nil {
+		writer.WriteHeader(http.StatusOK)
+		return
+	} else {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(model.NewError(errors.New("email already exists")))
+		return
+	}
+
 }

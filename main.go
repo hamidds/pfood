@@ -26,33 +26,33 @@ func main() {
 	//restaurantsDb := db.SetupRestaurantsDb(mongoClient)
 	//handler.CustomerStore = store.NewCustomerStore(customersDb)
 
-
 	// Manager Handlers
 	r.HandleFunc("/signup/manager", handler.ManagerSignUp).Methods("POST")
 	r.HandleFunc("/login/manager", handler.ManagerLogin).Methods("POST")
+	r.HandleFunc("/signup/check/email/{email}", handler.ManagerEmailCheck).Methods("GET")
+	// Food Handlers => By Manager
+	r.HandleFunc("/{rname}/foods", handler.AddFood).Methods("POST")                 // jwt
+	r.HandleFunc("/{rname}/{fname}", handler.DeleteFood).Methods("DELETE")          // jwt
+	r.HandleFunc("/{rname}/{fname}/{available}", handler.UpdateFood).Methods("PUT") // jwt
 
 	// Restaurant Handlers
-	r.HandleFunc("/manager", handler.AddRestaurant).Methods("POST") // jwt
+	r.HandleFunc("/manager", handler.AddRestaurant).Methods("POST")               // jwt
 	r.HandleFunc("/manager/restaurant", handler.UpdateRestaurant).Methods("POST") // jwt
 	// also can be used for pending orders
 	r.HandleFunc("/manager/restaurant", handler.GetRestaurantOfManager).Methods("GET") // jwt
 
 	// Customer Handlers
 	r.HandleFunc("/signup/user", handler.CustomerSignUp).Methods("POST")
-	r.HandleFunc("/signup/check/{number}", handler.CustomerPhoneCheck).Methods("GET")
-	r.HandleFunc("/login/user", handler.AuthMiddleware(handler.CustomerLogin)).Methods("POST")
-	r.HandleFunc("/customers", handler.UpdateCustomer).Methods("PUT") // jwt
+	r.HandleFunc("/signup/check/phone/{number}", handler.CustomerPhoneCheck).Methods("GET")
+	r.HandleFunc("/login/user", handler.CustomerLogin).Methods("POST")
+	r.HandleFunc("/profile", handler.AuthMiddleware(handler.UpdateCustomer)).Methods("PUT") // jwt
 	r.HandleFunc("/signup", handler.GetCustomers).Methods("GET")
-
-	// Food Handlers => By Manager
-	r.HandleFunc("/{rname}/foods", handler.AddFood).Methods("POST") // jwt
-	r.HandleFunc("/{rname}/{fname}", handler.DeleteFood).Methods("DELETE") // jwt
-	r.HandleFunc("/{rname}/{fname}/{available}", handler.UpdateFood).Methods("PUT") // jwt
+	r.HandleFunc("/profile", handler.AuthMiddleware(handler.GetCustomer)).Methods("GET")
 
 	// Food Filters => By Customer
-	r.HandleFunc("/foods", handler.GetFoods).Methods("GET") // jwt
+	r.HandleFunc("/foods", handler.GetFoods).Methods("GET")                            // jwt
 	r.HandleFunc("/foodss", handler.AuthMiddleware(handler.GetFoodsss)).Methods("GET") // jwt
-	r.HandleFunc("/foods/{fname}", handler.GetFoodsByName).Methods("GET") // jwt
+	r.HandleFunc("/foods/{fname}", handler.GetFoodsByName).Methods("GET")              // jwt
 	// r.HandleFunc("/foods/{rname}", handler.GetFoodsByRestaurant).Methods("GET")
 	// r.HandleFunc("/foods/{district}", handler.GetFoodsByDistrict).Methods("GET")
 	// r.HandleFunc("/foods/{rname}/{fname}", handler.GetFoodsByRestaurantAndName).Methods("GET")
@@ -61,13 +61,11 @@ func main() {
 	// Favorite Foods
 	// r.HandleFunc("/foods/favorites", handler.GetFavoriteFoods).Methods("GET")
 
-
 	// Comment Handlers
 	r.HandleFunc("/{rname}/{fname}/comments", handler.AddComment).Methods("POST")
 	// e.g. reply a comment
 	r.HandleFunc("/{rname}/{fname}/comments", handler.UpdateComment).Methods("PUT")
 	r.HandleFunc("/{rname}/{fname}/comments", handler.GetComments).Methods("GET")
-
 
 	// Order Handlers
 	r.HandleFunc("/{rname}/order", handler.AddOrder).Methods("POST")

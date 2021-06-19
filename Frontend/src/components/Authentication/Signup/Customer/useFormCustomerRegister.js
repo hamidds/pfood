@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react'
+const api_url = `http://localhost:8000`
 
 const useFormCustomerRegister = (callback, validate) => {
     const [values, setValues] = useState({
@@ -18,9 +19,24 @@ const useFormCustomerRegister = (callback, validate) => {
         })
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
         setErrors(validate(values));
+        let body = {
+            "phone_number": values.phone_number,
+            "password": values.password
+        }
+        await axios.get(`${api_url}/signup/check/phone/${values.phone_number}`)
+            .then((response) => {
+                // localStorage.setItem("token", response.data.user.token)
+                // console.log(response.data.user.token)
+                console.log("then")
+            }).catch(function (error) {
+                // handle error
+                let errors = {}
+                errors.phone_number = error.response.data.errors.body;
+                setErrors(errors)
+            });
         setIsSubmitting(true);
 
     }
@@ -35,15 +51,11 @@ const useFormCustomerRegister = (callback, validate) => {
                 console.log(values.phone_number);
                 console.log(values.password);
 
-                axios.post('http://localhost:8000/signup/user', body).then((response) => {
-                    localStorage.setItem("token", response.data.user.token)
-                    console.log(response.data.user.token)
-                }).catch(function (error) {
-                    // handle error
-                    let errors = {}
-                    errors.phone_number = error.response.data.errors.body;
-                    setErrors(errors)
-                });
+                axios.post(`${api_url}/signup/user`, body)
+                    .then((response) => {
+                        localStorage.setItem("token", response.data.user.token)
+                        console.log(response.data.user.token)
+                    })
                 callback();
             }
         },

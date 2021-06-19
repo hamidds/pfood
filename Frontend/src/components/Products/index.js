@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Input,
     ProductButton,
@@ -18,6 +18,7 @@ import {
 import axios from "axios";
 
 import product1 from '../../images/product-1.jpg';
+import ShoppingList from "./data";
 
 const apiUrl = 'http://localhost:8000';
 
@@ -43,10 +44,16 @@ const Products = ({heading, data}) => {
     const [searchTextRegion, setSearchRegion] = useState('');
     const [searchedData, setSearchedData] = useState([]);
     const storedJwt = localStorage.getItem('token');
+    // const user = localStorage.getItem('user');
     const [jwt, setJwt] = useState(storedJwt || null);
     const [shoppingListPrice, setShoppingListPrice] = useState(0)
     const [shoppingList, setShoppingList] = useState([]);
-    // const ss = getFoods()
+    const [showFoods, setShowFoods] = useState(true);
+    const [quantity, setQuantity] = useState(1);
+
+
+    useEffect(getFoods, [])
+
 
     function getFoods() {
 
@@ -57,13 +64,20 @@ const Products = ({heading, data}) => {
             setSearchedData(foods)
         }).catch(function (error) {
         });
+        if (localStorage.getItem("shopping_list")) {
+            let shp = JSON.parse(localStorage.getItem("shopping_list"));
+            let pr = Number(localStorage.getItem("shopping_price"));
+            setShoppingList(shp)
+            setShoppingListPrice(pr)
+        }
 
     }
 
-    function handleAddToCart(food, count) {
-        // setSearchTextName(value);
-        console.log(food)
+    function showShoppingList() {
+        setShowFoods(!showFoods)
+    }
 
+    function handleAddToCart(food, count) {
         let item = {
             "food": food,
             "count": count
@@ -72,12 +86,31 @@ const Products = ({heading, data}) => {
         shp.push(item)
         setShoppingList(shp)
         setShoppingListPrice(shoppingListPrice + food.price * count)
+        localStorage.setItem("shopping_list", JSON.stringify(shp));
+        localStorage.setItem("shopping_price", String(shoppingListPrice + food.price * count));
         console.log(shoppingListPrice)
+        console.log(food)
+        console.log(data)
+        console.log(shoppingList)
+    }
+
+    function handleDeleteFromCart(item) {
+        let shp = shoppingList.filter((value) => value.food.id !== item.food.id)
+        setShoppingList(shp)
+        setShoppingListPrice(shoppingListPrice - item.food.price * item.count)
+        localStorage.setItem("shopping_list", JSON.stringify(shp));
+        localStorage.setItem("shopping_price", String(shoppingListPrice - item.food.price * item.count));
+        console.log(shoppingListPrice)
+        // console.log(food)
+        console.log(shp)
         console.log(shoppingList)
     }
 
     const handleChangeName = value => {
         setSearchTextName(value);
+    }
+    const handleChangeQuantity = value => {
+        setQuantity(value);
     }
     const handleChangeRestaurant = value => {
         setSearchTextRestaurant(value);
@@ -85,6 +118,8 @@ const Products = ({heading, data}) => {
     const handleChangeRegion = value => {
         setSearchRegion(value);
     }
+
+
     const handleSearchClick = () => {
         filterDataOnName(searchTextName);
         filterDataOnRestaurant(searchTextRestaurant);
@@ -134,8 +169,7 @@ const Products = ({heading, data}) => {
         }
     }
 
-    return (
-        <ProductsContainer>
+    return (showFoods ? (<ProductsContainer>
             <ProductsHeading>{heading}</ProductsHeading>
             <SearchWrapper>
                 <Input
@@ -159,10 +193,12 @@ const Products = ({heading, data}) => {
                 <SearchButton
                     onClick={handleSearchClick}
                 >{"Search"}</SearchButton>
-
-                <SearchButton
-                    onClick={getFoods}
-                >{"Load"}</SearchButton>
+                {shoppingList.length !== 0 && <SearchButton
+                    onClick={showShoppingList}
+                >{"Shopping List"}</SearchButton>}
+                {/*<SearchButton*/}
+                {/*    onClick={showShoppingList}*/}
+                {/*>{"Shopping List"}</SearchButton>*/}
             </SearchWrapper>
 
             <ProductWrapper>
@@ -175,15 +211,22 @@ const Products = ({heading, data}) => {
                                 <ProductRestaurant>{product.restaurant.name} restaurant</ProductRestaurant>
                                 <ProductRegion>{product.restaurant.district}</ProductRegion>
                                 <ProductPrice>{product.price}</ProductPrice>
-                                <ProductButton onClick={() => handleAddToCart(product, 1)}>Add to cart</ProductButton>
+                                <Input
+                                    name="quantity"
+                                    placeholder="Quantity"
+                                    value={quantity}
+                                    onChange={e => handleChangeQuantity(e.target.value)}
+                                />
+                                <ProductButton onClick={() => handleAddToCart(product, )}>Add to cart</ProductButton>
                             </ProductInfo>
                         </ProductCard>
                     );
                 })}
                 {searchedData.length === 0 && <span>No records found to display!</span>}
             </ProductWrapper>
-        </ProductsContainer>
-    );
+        </ProductsContainer>) :
+        <ShoppingList data={shoppingList} price={shoppingListPrice} click={showShoppingList}
+                      deleteHandler={handleDeleteFromCart}/>);
 };
 
 export default Products;

@@ -1,10 +1,11 @@
 import React from 'react'
-import useFormCustomerRegister from './useFormCustomerRegister'
-import validate from './validateCustomerRegistrationInfo'
+import useFormManagerLogin from './useFormManagerLogin'
+import validate from './validateManagerLoginInfo'
+import {BrowserRouter as Router, Link} from "react-router-dom";
 
-const FormSignupManager = ({ submitForm }) => {
+const FormLoginManager = ({submitForm}) => {
     const {handleChange, values, handleSubmit, errors}
-        = useFormCustomerRegister(
+        = useFormManagerLogin(
         submitForm,
         validate
     );
@@ -12,15 +13,18 @@ const FormSignupManager = ({ submitForm }) => {
 
     return (
         <div className="form-content-right">
+            <div className="">
+
+            </div>
             <form className="form" onSubmit={handleSubmit} noValidate>
-                <h1>Register Page </h1>
+                <h1>Login Page </h1>
                 <div className="form-inputs">
-                    <label htmlFor="email" className="form-label">
-                        Phone number:
+                    <label htmlFor="phone_number" className="form-label">
+                        Email address:
                     </label>
                     <input
                         id="email"
-                        type="email"
+                        type="text"
                         name="email"
                         className="form-input"
                         placeholder="Enter your email address"
@@ -44,15 +48,21 @@ const FormSignupManager = ({ submitForm }) => {
                     />
                     {errors.password && <p>{errors.password}</p>}
                 </div>
+
+
                 <button className="form-input-btn" type="submit">
-                    Sign up
+                    Log in
                 </button>
                 <span className="form-input-login">
-            Already have an account? <a href="#">Login</a>
+            Don't have an account? <Link to={"/managerSignup"} exact>Register</Link>
+            </span>
+                <span className="form-input-manager-register">
+            Login as a customer. Login <Link to={"/customerLogin"} exact>here</Link>
+
             </span>
             </form>
         </div>
     )
 }
 
-export default FormSignupManager
+export default FormLoginManager

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import FormSignupCustomer from './FormSignupCustomer';
-import './Form.css';
+import '../../RegisterForm.css';
 import {Redirect} from "react-router-dom";
 
 const FormCustomerRegister = () => {
@@ -17,7 +17,7 @@ const FormCustomerRegister = () => {
             <div className='form-content-left'>
                 <img className='form-img' src='img/img-customer.svg' alt='customer'/>
             </div>
-            {!isSubmitted ? (<FormSignupCustomer submitForm={submitForm} />) : <Redirect to="/main"/> }
+            {!isSubmitted ? (<FormSignupCustomer submitForm={submitForm} />) : <Redirect to="/profile"/>}
         </div>
         </>
     )

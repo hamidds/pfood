@@ -1,11 +1,11 @@
 import React from 'react'
-import useFormCustomerRegister from './useFormCustomerRegister'
-import validate from './validateCustomerRegistrationInfo'
-import {BrowserRouter as Router, Link} from "react-router-dom";
+import useFormCustomerLogin from './useFormCustomerLogin'
+import validate from './validateCustomerLoginInfo'
+import {Link} from "react-router-dom";
 
-const FormSignupCustomer = ({submitForm}) => {
+const FormLoginCustomer = ({submitForm}) => {
     const {handleChange, values, handleSubmit, errors}
-        = useFormCustomerRegister(
+        = useFormCustomerLogin(
         submitForm,
         validate
     );
@@ -17,7 +17,7 @@ const FormSignupCustomer = ({submitForm}) => {
 
             </div>
             <form className="form" onSubmit={handleSubmit} noValidate>
-                <h1>Register Page </h1>
+                <h1>Login Page </h1>
                 <div className="form-inputs">
                     <label htmlFor="phone_number" className="form-label">
                         Phone number:
@@ -51,19 +51,19 @@ const FormSignupCustomer = ({submitForm}) => {
 
 
                 <button className="form-input-btn" type="submit">
-                    Sign up
+                    Log in
                 </button>
                 <span className="form-input-login">
-            Already have an account? <a href="#">Login</a>
+            Don't have an account? <Link to={"/"} exact>Register</Link>
+
             </span>
                 <span className="form-input-manager-register">
-                <Router>
-                    Register as a company owner? Sign up <Link to={"/FormManagerRegister"} exact>here</Link>
-                </Router>
+            Login as a manager. Login <Link to={"/managerLogin"} exact>here</Link>
+
             </span>
             </form>
         </div>
     )
 }
 
-export default FormSignupCustomer
+export default FormLoginCustomer

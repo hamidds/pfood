@@ -8,14 +8,15 @@ import (
 
 type CustomerResponse struct {
 	Customer struct {
-		PhoneNumber  string     `json:"phone_number"   bson:"_id"`
-		Name         string     `json:"name"           bson:"name"`
-		Credit       int        `json:"credit"         bson:"credit"`
-		District     int        `json:"district"       bson:"district"`
-		Address      string     `json:"address"        bson:"address"`
-		OrderHistory []*Order   `json:"order_history"  bson:"order_history"`
-		Favorites    []*Food    `json:"favorites"      bson:"favorites"`
-		Comments     []*Comment `json:"comments"       bson:"comments"`
+		PhoneNumber  string     `json:"phone_number"       bson:"_id"`
+		Name         string     `json:"name"               bson:"name"`
+		Password     string     `json:"password"           bson:"password"`
+		Credit       int        `json:"credit"             bson:"credit"`
+		District     int        `json:"district"           bson:"district"`
+		Address      string     `json:"address"            bson:"address"`
+		OrderHistory []*Order   `json:"order_history"      bson:"order_history"`
+		Favorites    []*Food    `json:"favorites"          bson:"favorites"`
+		Comments     []*Comment `json:"comments"           bson:"comments"`
 		Token        string     `json:"token"`
 	} `json:"user"`
 }
@@ -24,6 +25,7 @@ func NewUserResponse(customer *Customer) *CustomerResponse {
 	response := new(CustomerResponse)
 	response.Customer.PhoneNumber = customer.PhoneNumber
 	response.Customer.Name = customer.Name
+	response.Customer.Password = customer.Password
 	response.Customer.Credit = customer.Credit
 	response.Customer.District = customer.District
 	response.Customer.Address = customer.Address
@@ -69,6 +71,7 @@ type ManagerResponse struct {
 		Email      string      `json:"email"       bson:"email"        validate:"required,email"`
 		Restaurant *Restaurant `json:"restaurant"  bson:"restaurant"   validate:"isdefault"`
 		Name       string      `json:"name"        bson:"name"         validate:"isdefault"`
+		Token      string      `json:"token"`
 	} `json:"manager"`
 }
 
@@ -77,6 +80,7 @@ func NewManagerResponse(manager *Manager) *ManagerResponse {
 	response.Manager.Email = manager.Email
 	response.Manager.Name = manager.Name
 	response.Manager.Restaurant = manager.Restaurant
+	response.Manager.Token = utils.GenerateJWT("email", manager.Email)
 	return response
 }
 
@@ -172,4 +176,3 @@ type OrdersResponse struct {
 func NewOrdersResponse(orders []*Order) *OrdersResponse {
 	return &OrdersResponse{Comments: orders}
 }
-
