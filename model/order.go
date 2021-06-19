@@ -16,8 +16,6 @@ const Delivering = "Delivering!"
 const Delivered = "Delivered!"
 
 type Order struct {
-	//Foods      Food   `json:"foods"       bson:"foods"`
-	//Foods      map[string]int `json:"foods"       bson:"foods"`
 	ID                  primitive.ObjectID `json:"_id" bson:"_id"`
 	Items               []*Item            `json:"items"                 bson:"items"`
 	TotalPrice          float64            `json:"total_price"           bson:"total_price"`

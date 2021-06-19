@@ -51,6 +51,7 @@ func main() {
 
 	// Food Filters => By Customer
 	r.HandleFunc("/foods", handler.GetFoods).Methods("GET") // jwt
+	r.HandleFunc("/foodss", handler.AuthMiddleware(handler.GetFoodsss)).Methods("GET") // jwt
 	r.HandleFunc("/foods/{fname}", handler.GetFoodsByName).Methods("GET") // jwt
 	// r.HandleFunc("/foods/{rname}", handler.GetFoodsByRestaurant).Methods("GET")
 	// r.HandleFunc("/foods/{district}", handler.GetFoodsByDistrict).Methods("GET")

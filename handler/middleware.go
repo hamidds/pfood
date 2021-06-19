@@ -16,6 +16,7 @@ func AuthMiddleware(next http.Handler) http.HandlerFunc {
 		writer.Header().Set("Content-Type", "application/json")
 
 		tokenString := request.Header.Get("Authorization")
+		fmt.Println(tokenString)
 		if len(tokenString) == 0 {
 			writer.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(writer).Encode(model.NewError(errors.New("missing Authorization Header")))

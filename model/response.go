@@ -172,3 +172,4 @@ type OrdersResponse struct {
 func NewOrdersResponse(orders []*Order) *OrdersResponse {
 	return &OrdersResponse{Comments: orders}
 }
+

@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/hamidds/pfood/model"
 	"github.com/hamidds/pfood/store"
@@ -60,7 +61,6 @@ func AddFood(writer http.ResponseWriter, request *http.Request) {
 	NewFood.SetFields(food)
 	NewFood.Restaurant = currentRestaurant
 	currentRestaurant.AddFood(NewFood)
-
 
 	// Add Food to Foods Database
 	err = FoodStore.Create(NewFood)
@@ -129,6 +129,54 @@ func GetFoods(writer http.ResponseWriter, request *http.Request) {
 
 	writer.WriteHeader(http.StatusOK)
 	response := model.NewFoodsResponse(foods)
+	json.NewEncoder(writer).Encode(response)
+}
+
+func setupResponse(writer *http.ResponseWriter, request *http.Request) {
+	(*writer).Header().Set("Access-Control-Allow-Origin", "*")
+	(*writer).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*writer).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+}
+
+var GetFoodsss = http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	setupResponse(&writer, request)
+	fmt.Println("GetFoodss")
+	writer.Header().Set("Content-Type", "application/json")
+	var foods []model.Food
+
+	food := *model.NewFood()
+	food.Name = "Qorme Sabzi"
+	food.Price = 10000
+	foods = append(foods, food)
+
+	food2 := *model.NewFood()
+	food2.Name = "Qeyme"
+	food2.Price = 1022
+	foods = append(foods, food2)
+
+	writer.WriteHeader(http.StatusOK)
+	response := model.NewFoodsResponse(&foods)
+	json.NewEncoder(writer).Encode(response)
+})
+
+func GetFoodss(writer http.ResponseWriter, request *http.Request) {
+	setupResponse(&writer, request)
+	fmt.Println("GetFoodss")
+	writer.Header().Set("Content-Type", "application/json")
+	var foods []model.Food
+
+	food := *model.NewFood()
+	food.Name = "Qorme Sabzi"
+	food.Price = 10000
+	foods = append(foods, food)
+
+	food2 := *model.NewFood()
+	food2.Name = "Qeyme"
+	food2.Price = 1022
+	foods = append(foods, food2)
+
+	writer.WriteHeader(http.StatusOK)
+	response := model.NewFoodsResponse(&foods)
 	json.NewEncoder(writer).Encode(response)
 }
 
